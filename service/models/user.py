@@ -14,4 +14,5 @@ class User(AbstractUser):
         default="M",
         max_length=16,
     )
-    phoneNumber = models.CharField(max_length=15, blank=True)
+    phoneNumber = models.CharField(max_length=15,blank=True)
+

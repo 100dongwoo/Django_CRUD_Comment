@@ -1,6 +1,6 @@
-from service.models import Post
+from service.models import Post, Comment
 from rest_framework.viewsets import ModelViewSet
-from service.serializers import PostSerializer
+from service.serializers import PostSerializer, CommentSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,6 +25,17 @@ class PostViewSet(ModelViewSet):
             permission_classes = [IsOwner]
         return [permission() for permission in permission_classes]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        postId = serializer.data["id"]
+        comments = Comment.objects.all()
+        comments_list = comments.filter(post=postId)
+        serializer_comments = CommentSerializer(comments_list, many=True, )
+        return JsonResponse({'post': serializer.data, "comment": serializer_comments.data}, status=200)
+        # return Response(serializer.data)
+
+    #
     @transaction.atomic()
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -38,9 +49,9 @@ class MyPostView(APIView):
         # posts_list = (Post.objects.filter(user__id=get_data['id']))
         # posts_list = posts.filter(user__id=request.data["id"])
         posts_list = Post.objects.filter(user__id=request.session.get("_auth_user_id"))
-        serialized_posts = PostSerializer(posts_list, many=True,context={"request": request})
+        serialized_posts = PostSerializer(posts_list, many=True, context={"request": request})
         return Response(data=serialized_posts.data)
-        
+
         #  posts_list= posts.filter(user__id=request.data["id"])
         # return JsonResponse({"data": posts_list})
 

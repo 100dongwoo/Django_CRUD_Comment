@@ -27,4 +27,12 @@ class PostViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
+# class MyPostView(APIView):
+#
+#     def get(self, request):
+#         posts = Post.objects.all()
+#         # user = User.objects.filter(email=input_data['email']).first()
+#         print(posts.filter(user=request.session["_auth_user_id"]))
+#         # for key, value in request.session.items():
+#         #     print('{} => {}'.format(key, value))
+#         return Response({'response': 'ok'})  # 에러 없이 수행됐을 시의 결과 출력

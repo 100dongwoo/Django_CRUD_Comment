@@ -11,6 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout
 
+
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -58,3 +59,10 @@ class UserLoginView(APIView):
         login(request, user)
         serializer = UserProfileSerializer(context={'request': request}, instance=user)
         return JsonResponse({'user': serializer.data}, status=201)
+
+
+class Logout(APIView):
+    def get(self, request, format=None):
+        # using Django logout
+        logout(request)
+        return Response(status=status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 from service.models import Post, Comment
 from rest_framework.viewsets import ModelViewSet
-from service.serializers import PostSerializer, CommentSerializer
+from service.serializers import PostSerializer, CommentSerializer, DetailCommentSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -31,7 +31,7 @@ class PostViewSet(ModelViewSet):
         postId = serializer.data["id"]
         comments = Comment.objects.all()
         comments_list = comments.filter(post=postId)
-        serializer_comments = CommentSerializer(comments_list, many=True, )
+        serializer_comments = DetailCommentSerializer(comments_list, many=True, context={"request": request})
         return JsonResponse({'post': serializer.data, "comment": serializer_comments.data}, status=200)
         # return Response(serializer.data)
 

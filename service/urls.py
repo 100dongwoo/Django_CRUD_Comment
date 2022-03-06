@@ -10,7 +10,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("signUp", v1.UserSignUpView.as_view()),
     path("signIn", v1.UserLoginView.as_view()),
-    path("logout", v1.Logout.as_view())
-
+    path("logout", v1.Logout.as_view()),
+    path("myPost",v1.MyPostView.as_view())
     # path("users", v1.UserViewSet)
 ]

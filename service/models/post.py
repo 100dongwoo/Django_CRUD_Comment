@@ -10,6 +10,8 @@ class Post(models.Model):
         on_delete=models.CASCADE, to="User", related_name="Post_users",
     )
 
+    def __str__(self):
+        return f'{self.title}/{self.id}'
     # is_mine = serializers.SerializerMethodField(read_only=True)
 
 

@@ -29,9 +29,10 @@ class PostViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         postId = serializer.data["id"]
-        comments = Comment.objects.all()
-        comments_list = comments.filter(post=postId)
-        serializer_comments = DetailCommentSerializer(comments_list, many=True, context={"request": request})
+        # comments = Comment.objects.all()
+        # comments_list = comments.filter(post=postId)
+        comments = Comment.objects.select_related('user', 'post').filter(post=postId).order_by('-created_at').distinct()
+        serializer_comments = DetailCommentSerializer(comments, many=True, context={"request": request})
         return JsonResponse({'post': serializer.data, "comment": serializer_comments.data}, status=200)
         # return Response(serializer.data)
 
@@ -48,7 +49,8 @@ class MyPostView(APIView):
         get_data = request.data  # or request.GET check both
         # posts_list = (Post.objects.filter(user__id=get_data['id']))
         # posts_list = posts.filter(user__id=request.data["id"])
-        posts_list = Post.objects.filter(user__id=request.session.get("_auth_user_id"))
+        # posts_list = Post.objects.filter(user__id=request.session.get("_auth_user_id"))
+        posts_list = Post.objects.filter(user=request.user)
         serialized_posts = PostSerializer(posts_list, many=True, context={"request": request})
         return Response(data=serialized_posts.data)
 

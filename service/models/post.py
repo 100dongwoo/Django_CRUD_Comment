@@ -9,6 +9,12 @@ class Post(models.Model):
     user = models.ForeignKey(
         on_delete=models.CASCADE, to="User", related_name="Post_users",
     )
+    likeUsers = models.ManyToManyField(
+        to='User',
+        related_name='like_post_users',
+        verbose_name='좋아요 선택한 유저목록',
+        blank=True,
+    )
 
     def __str__(self):
         return f'{self.title}/{self.id}'

@@ -7,7 +7,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework import permissions
 from service.permissions import IsOwner
-
+from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 
 
@@ -40,7 +40,6 @@ class PostViewSet(ModelViewSet):
     @transaction.atomic()
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
 
 class MyPostView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

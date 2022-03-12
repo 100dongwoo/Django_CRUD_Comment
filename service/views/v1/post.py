@@ -42,12 +42,10 @@ class PostViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
     @transaction.atomic()
-    @action(detail=False,methods=["post"])
+    @action(detail=False, methods=["post"])
     def toggleLike(self, request):
         data = request.data
         post = Post.objects.get(id=data["id"])
-        # print(post)
-        print("111111111",post.likeUsers.all(),request.user)
         if request.user in post.likeUsers.all():
             post.likeUsers.remove(request.user)
             serializer_post = PostSerializer(post, context={"request": request})

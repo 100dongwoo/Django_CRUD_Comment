@@ -15,6 +15,11 @@ class Post(models.Model):
         verbose_name='좋아요 선택한 유저목록',
         blank=True,
     )
+    hitCount = models.PositiveIntegerField(
+        verbose_name='조회수',
+        default=0,
+        null=True
+    )
 
     def __str__(self):
         return f'{self.title}/{self.id}'

@@ -33,6 +33,10 @@ class PostViewSet(ModelViewSet):
         # comments_list = comments.filter(post=postId)
         comments = Comment.objects.select_related('user', 'post').filter(post=postId).order_by('-created_at').distinct()
         serializer_comments = DetailCommentSerializer(comments, many=True, context={"request": request})
+
+        instance.hitCount += 1
+        instance.save()
+
         return JsonResponse({'post': serializer.data, "comment": serializer_comments.data}, status=200)
         # return Response(serializer.data)
 

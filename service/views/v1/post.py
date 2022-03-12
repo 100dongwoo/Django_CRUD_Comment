@@ -41,6 +41,28 @@ class PostViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @transaction.atomic()
+    @action(detail=False)
+    def toggleLike(self, request):
+        data = request.data
+        post = Post.objects.get(id=data["id"])
+        print(post)
+        if request.user in post.likeUsers.all():
+            post.likeUsers.remove(request.user)
+            serializer_post = PostSerializer(post, context={"request": request})
+            return JsonResponse({"data": serializer_post.data, "ok": "좋아요 삭제"}, status=200)
+        else:
+            post.likeUsers.add(request.user)
+            serializer_post = PostSerializer(post, context={"request": request})
+            return JsonResponse({"data": serializer_post.data, "ok": "좋아요 성공"}, status=201)
+
+    # @action(detail=False)
+    # def public_list(self, request):
+    #     qs = self.queryset.filter(is_public=True)
+    #     serializer = self.get_serializer(qs, many=True)
+    #     return Response(serializer.data)
+
+
 class MyPostView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 

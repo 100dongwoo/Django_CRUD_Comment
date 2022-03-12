@@ -46,7 +46,8 @@ class PostViewSet(ModelViewSet):
     def toggleLike(self, request):
         data = request.data
         post = Post.objects.get(id=data["id"])
-        print(post)
+        # print(post)
+        print("111111111",post.likeUsers.all(),request.user)
         if request.user in post.likeUsers.all():
             post.likeUsers.remove(request.user)
             serializer_post = PostSerializer(post, context={"request": request})

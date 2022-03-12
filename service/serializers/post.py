@@ -20,4 +20,3 @@ class PostSerializer(serializers.ModelSerializer):
         if not me.is_authenticated:
             return False
         return obj.user_id == me.id
-

@@ -42,7 +42,7 @@ class PostViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
     @transaction.atomic()
-    @action(detail=False)
+    @action(detail=False,methods=["post"])
     def toggleLike(self, request):
         data = request.data
         post = Post.objects.get(id=data["id"])

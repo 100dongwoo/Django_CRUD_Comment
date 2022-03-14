@@ -9,6 +9,7 @@ from rest_framework import permissions
 from service.permissions import IsOwner
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class PostViewSet(ModelViewSet):
@@ -49,15 +50,28 @@ class PostViewSet(ModelViewSet):
     @action(detail=False, methods=["post"])
     def toggleLike(self, request):
         data = request.data
-        post = Post.objects.get(id=data["id"])
-        if request.user in post.likeUsers.all():
-            post.likeUsers.remove(request.user)
-            serializer_post = PostSerializer(post, context={"request": request})
-            return JsonResponse({"data": serializer_post.data, "ok": "좋아요 삭제"}, status=200)
-        else:
-            post.likeUsers.add(request.user)
-            serializer_post = PostSerializer(post, context={"request": request})
-            return JsonResponse({"data": serializer_post.data, "ok": "좋아요 성공"}, status=201)
+        # post = Post.objects.get(id=data["id"])
+        # if post is not None:
+
+        try:
+            post = Post.objects.get(id=data["id"])
+            if request.user in post.likeUsers.all():
+                post.likeUsers.remove(request.user)
+                serializer_post = PostSerializer(post, context={"request": request})
+                return JsonResponse({"data": serializer_post.data, "ok": "좋아요 삭제"}, status=200)
+            else:
+                post.likeUsers.add(request.user)
+                serializer_post = PostSerializer(post, context={"request": request})
+                return JsonResponse({"data": serializer_post.data, "ok": "좋아요 성공"}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"msg": "데이터가 존재하지않습니다"}, status=404)
+
+    # @action(detail=False, methods=["get"])
+    # def likePost(self, request):
+    #     # 좋아요한 게시글
+    #     post = Post.objects.all()
+    #     print(post[0].likeUsers)
+    #     return JsonResponse({"ok": "내가 좋아요한 게시글"}, status=200)
 
     # @action(detail=False)
     # def public_list(self, request):

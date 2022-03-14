@@ -52,7 +52,8 @@ class PostViewSet(ModelViewSet):
         data = request.data
         # post = Post.objects.get(id=data["id"])
         # if post is not None:
-
+        if request.user.is_anonymous:
+            return JsonResponse({"msg": "로그인 후 이용바랍니다"}, status=403)
         try:
             post = Post.objects.get(id=data["id"])
             if request.user in post.likeUsers.all():
@@ -70,6 +71,7 @@ class PostViewSet(ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def likePost(self, request, likeUsers_id=None):
+
         # 좋아요한 게시글
         # post = Post.objects.get(request.user in User)
         # print(post[0]["like_post_users"])
@@ -88,6 +90,8 @@ class MyPostView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request):
+        if request.user.is_anonymous:
+            return JsonResponse({"msg": "로그인 후 이용바랍니다"}, status=403)
         get_data = request.data  # or request.GET check both
         # posts_list = (Post.objects.filter(user__id=get_data['id']))
         # posts_list = posts.filter(user__id=request.data["id"])

@@ -66,3 +66,14 @@ class Logout(APIView):
         # using Django logout
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+
+class UserProfile(APIView):
+    def get(self, request, format=None):
+        if request.user.is_anonymous:
+            return JsonResponse({"msg": "로그인 후 이용바랍니다"}, status=403)
+
+        print(request.user)
+        user = User.objects.filter(id=request.session.get("_auth_user_id")).first()
+        serializer = UserProfileSerializer(context={'request': request}, instance=user)
+        return JsonResponse({'user': serializer.data}, status=200)

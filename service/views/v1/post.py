@@ -64,14 +64,18 @@ class PostViewSet(ModelViewSet):
                 serializer_post = PostSerializer(post, context={"request": request})
                 return JsonResponse({"data": serializer_post.data, "ok": "좋아요 성공"}, status=201)
         except ObjectDoesNotExist:
+            # except Post.DoesNotExist:
+            # 위 둘다 사용가능
             return JsonResponse({"msg": "데이터가 존재하지않습니다"}, status=404)
 
-    # @action(detail=False, methods=["get"])
-    # def likePost(self, request):
-    #     # 좋아요한 게시글
-    #     post = Post.objects.all()
-    #     print(post[0].likeUsers)
-    #     return JsonResponse({"ok": "내가 좋아요한 게시글"}, status=200)
+    @action(detail=False, methods=["get"])
+    def likePost(self, request, likeUsers_id=None):
+        # 좋아요한 게시글
+        # post = Post.objects.get(request.user in User)
+        # print(post[0]["like_post_users"])
+        posts_list = Post.objects.filter(likeUsers=request.user)
+        serializer_post = PostSerializer(posts_list, many=True, context={"request": request})
+        return JsonResponse({"data": serializer_post.data, "ok": "내가 좋아요한 게시글"}, status=201)
 
     # @action(detail=False)
     # def public_list(self, request):

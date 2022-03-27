@@ -3,22 +3,8 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "gender",
-            "phoneNumber","followUser"
-        )
-        # exclude = ('password',)
-        # fields = '__all__'
+    follow_count = serializers.SerializerMethodField(read_only=True)
 
-
-class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -29,8 +15,35 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "email",
             "gender",
             "phoneNumber",
-            "followUser"
+            "followUser",
+            'follow_count'
         )
+        # exclude = ('password',)
+        # fields = '__all__'
+
+    def get_follow_count(self, obj):
+        return len(obj.followUser.all())
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    follow_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "phoneNumber",
+            "followUser",
+            'follow_count'
+        )
+
+        def get_follow_count(self, obj):
+            return len(obj.followUser.all())
         # exclude = ('password',)
         # fields = '__all__'
 

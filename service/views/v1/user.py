@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class UserViewSet(ModelViewSet):
@@ -77,3 +78,26 @@ class UserProfile(APIView):
         user = User.objects.filter(id=request.session.get("_auth_user_id")).first()
         serializer = UserProfileSerializer(context={'request': request}, instance=user)
         return JsonResponse({'user': serializer.data}, status=200)
+
+
+class FollowUserView(APIView):
+    def post(self, request):
+        data = request.data
+        if request.user.is_anonymous:
+            return JsonResponse({"msg": "로그인 후 이용바랍니다"}, status=403)
+
+        try:
+            user = User.objects.get(id=data["id"])
+            if request.user == user:
+                return JsonResponse({"msg": "자기 자신은 팔로우 할 수없습니다"}, status=403)
+
+            if request.user in user.followUser.all():
+                user.followUser.remove(request.user)
+                serializer_user = UserSerializer(user, context={"request": request})
+                return JsonResponse({"data": serializer_user.data, "ok": "팔로우 삭제"}, status=200)
+            else:
+                user.followUser.add(request.user)
+                serializer_user = UserSerializer(user, context={"request": request})
+                return JsonResponse({"data": serializer_user.data, "ok": "팔로우 성공"}, status=201)
+        except ObjectDoesNotExist:
+            return JsonResponse({"msg": "데이터가 존재하지않습니다"}, status=404)

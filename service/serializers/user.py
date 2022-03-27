@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "gender",
-            "phoneNumber"
+            "phoneNumber","followUser"
         )
         # exclude = ('password',)
         # fields = '__all__'
@@ -28,7 +28,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "email",
             "gender",
-            "phoneNumber"
+            "phoneNumber",
+            "followUser"
         )
         # exclude = ('password',)
         # fields = '__all__'

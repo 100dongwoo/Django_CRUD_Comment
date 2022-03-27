@@ -43,3 +43,17 @@ class PostSerializer(serializers.ModelSerializer):
         #     return True
         # else:
         #     return False
+class FollowerPostSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Post
+        fields = (
+            "id", "title", "content", "user",
+        )
+
+
+        # fields = ( "content", )
+        # exclude = ("created",)
+        # read_only_fields = ["user", "id", "created", "updated", ]
+
+

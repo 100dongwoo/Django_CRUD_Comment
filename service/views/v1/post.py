@@ -1,6 +1,6 @@
-from service.models import Post, Comment
+from service.models import Post, Comment, User
 from rest_framework.viewsets import ModelViewSet
-from service.serializers import PostSerializer, CommentSerializer, DetailCommentSerializer
+from service.serializers import PostSerializer, FollowerPostSerializer, DetailCommentSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -84,6 +84,19 @@ class PostViewSet(ModelViewSet):
     #     qs = self.queryset.filter(is_public=True)
     #     serializer = self.get_serializer(qs, many=True)
     #     return Response(serializer.data)
+
+
+class FollowPostView(APIView):
+    def get(self, request):
+        me = request.user  # 나
+        user_list = me.followUser.all()
+        posts = []
+        for follower in user_list:
+            posts_list = Post.objects.filter(user=follower)
+            for post in posts_list:
+                posts.append(post)
+        serializer = FollowerPostSerializer(posts, many=True)
+        return JsonResponse({"data": serializer.data, "갯수": len(posts), "ok": "내가 팔로우한 유저의 게시글"}, status=201)
 
 
 class MyPostView(APIView):

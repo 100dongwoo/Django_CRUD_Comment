@@ -2,6 +2,24 @@ from service.models import User
 from rest_framework import serializers
 
 
+class BasicUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "phoneNumber",
+        )
+        # exclude = ('password',)
+        # fields = '__all__'
+
+
+
 class UserSerializer(serializers.ModelSerializer):
     follow_count = serializers.SerializerMethodField(read_only=True)
 

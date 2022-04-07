@@ -15,6 +15,7 @@ urlpatterns = [
     path("logout", v1.Logout.as_view()),
     path("myPost", v1.MyPostView.as_view()),
     path("profile", v1.UserProfile.as_view()),
+    path("searchId", v1.UserSearchId.as_view()),
     path("follow", v1.FollowUserView.as_view()),
     path("followPost", v1.FollowPostView.as_view())
     # path("users", v1.UserViewSet)

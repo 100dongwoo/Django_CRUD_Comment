@@ -2,7 +2,7 @@ import json
 
 from service.models import User
 from rest_framework.viewsets import ModelViewSet
-from service.serializers import UserSerializer, UserProfileSerializer
+from service.serializers import UserSerializer, UserProfileSerializer, BasicUserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -20,6 +20,7 @@ class UserViewSet(ModelViewSet):
 
 class UserSignUpView(APIView):
     def post(self, request):
+        print("123")
         data = request.data
         serializer = UserProfileSerializer(data=data)
 
@@ -80,6 +81,14 @@ class UserProfile(APIView):
         return JsonResponse({'user': serializer.data}, status=200)
 
 
+class UserSearchId(APIView):
+    def post(self, request):
+        data = request.data
+        user = User.objects.filter(username=data["username"], email=data["email"]).first()
+        serializer_user = BasicUserSerializer(user)
+        return JsonResponse({'userEmail': serializer_user.data["email"]}, status=200)
+
+
 class FollowUserView(APIView):
     def post(self, request):
         data = request.data
@@ -87,7 +96,7 @@ class FollowUserView(APIView):
             return JsonResponse({"msg": "로그인 후 이용바랍니다"}, status=403)
 
         try:
-            me = request.user #나
+            me = request.user  # 나
             targetUser = User.objects.get(id=data["id"])  # 대상
             if targetUser == me:
                 return JsonResponse({"msg": "자기 자신은 팔로우 할 수없습니다"}, status=403)

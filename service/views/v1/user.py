@@ -81,13 +81,57 @@ class UserProfile(APIView):
         return JsonResponse({'user': serializer.data}, status=200)
 
 
+# FindUserById
 class UserSearchId(APIView):
     def post(self, request):
         data = request.data
         user = User.objects.filter(username=data["username"], email=data["email"]).first()
+        if user is None:
+            return JsonResponse({'msg': "아이디를 찾을 수 없다"}, status=401)
+
         serializer_user = BasicUserSerializer(user)
         return JsonResponse({'userEmail': serializer_user.data["email"]}, status=200)
 
+
+class ResetUserPassword(APIView):
+    def post(self, request):
+        data = request.data
+
+        user = User.objects.filter(id=data['id']).first()
+        if not user:
+            return JsonResponse({'msg': '에러'})
+
+        else:
+            user.set_password(data['newpassword'])
+            user.save()
+            serializer_user = BasicUserSerializer(user).data
+            return Response(serializer_user, status=status.HTTP_200_OK)
+
+        # user = User.objects.get(id=data['id'])
+        # serializer = BasicUserSerializer(instance=user)
+        #
+        # if serializer.is_valid(raise_exception=True):
+        #     return Response({'msg': serializer.data}, status=403)
+        # else:
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # try:
+        #     serializer_user = BasicUserSerializer(user).data
+        #     return JsonResponse({'userEmail': serializer_user}, status=200)
+        # except:
+        #     return JsonResponse({'msg': "에러"}, status=401)
+
+
+# if serializer.is_valid(raise_exception=True):
+#          new_user = serializer.save()
+#          if 'password' in data:
+#              new_user.set_password(data['password'])
+#          else:
+#              return Response({'msg': 'password not exist'}, status=403)
+#          new_user.save()
+#          return Response(UserSerializer(new_user).data)
+#      else:
+#          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST, )
 
 class FollowUserView(APIView):
     def post(self, request):

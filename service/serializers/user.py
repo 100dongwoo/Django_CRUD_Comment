@@ -60,7 +60,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'follow_count'
         )
 
-        def get_follow_count(self, obj):
+    def get_follow_count(self, obj):
             return len(obj.followUser.all())
         # exclude = ('password',)
         # fields = '__all__'
